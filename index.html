@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbonell Tech Tips</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="navbar">
+        <div class="navbar-left">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
+                <span class="logo-text">Carbonell <span class="highlight">Tech Tips</span></span>
+            </a>
+        </div>
+
+        <div class="navbar-center">
+            <div class="search-bar">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar por dicas, ferramentas ou sistemas..."
+                    aria-label="Buscar dicas">
+            </div>
+        </div>
+
+        <div class="navbar-right">
+            <button class="btn btn-secondary" onclick="openAdminModal()" style="padding: 8px 16px; font-size: 0.9rem;">
+                <i data-lucide="plus" style="width: 18px; height: 18px;"></i> Nova Dica
+            </button>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=Thiago+Luiz&background=0284c7&color=fff&size=128"
+                        alt="Thiago Luiz">
+                </div>
+                <span class="user-name">Thiago Luiz</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="badge">Dica da Semana</span>
+            <h1 class="hero-title">Automatize Boletins com Google Scripts</h1>
+            <p class="hero-description">
+                Aprenda como economizar horas de trabalho automatizando a geração de relatórios e notas diretamente no
+                ecossistema do Google Workspace escolar.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary"
+                    onclick="openModal('Dica da Semana', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000')">
+                    <i data-lucide="play"></i> Assistir Agora
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="content-container">
+
+        <!-- Filters -->
+        <div class="filters-container">
+            <button class="filter-pill active" data-category="Todos">Todos</button>
+            <button class="filter-pill" data-category="Novidades">Novidades</button>
+            <button class="filter-pill" data-category="Google Planilhas">Google Planilhas</button>
+            <button class="filter-pill" data-category="Google Docs & Drive">Google Docs & Drive</button>
+            <button class="filter-pill" data-category="Inteligência Artificial">Inteligência Artificial</button>
+            <button class="filter-pill" data-category="Dicas de Windows">Dicas de Windows</button>
+        </div>
+
+        <!-- Swimlanes Wrapper (Injetado via JS) -->
+        <div id="swimlanes-wrapper">
+            <!-- As swimlanes (carrosséis) geradas dinamicamente aparecerão aqui -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Colégio Carbonell - Setor de Tecnologia. Desenvolvido para o Portal do Colaborador.</p>
+    </footer>
+
+    <!-- Video Modal / Lightbox -->
+    <div id="videoModal" class="modal">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i data-lucide="x"></i></button>
+            <div class="modal-header">
+                <h3 id="modalTitle">Título da Dica</h3>
+            </div>
+            <div class="modal-body">
+                <div class="video-placeholder">
+                    <img id="modalVideoImage" src="" alt="Video Tip" />
+                    <div class="fake-play-btn"><i data-lucide="play" fill="currentColor"></i></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p>Nesta dica, exploramos técnicas essenciais para melhorar o fluxo de trabalho diário. Assista ao
+                    conteúdo acima ou siga o passo a passo descrito.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-backdrop" onclick="closeAdminModal()"></div>
+        <div class="modal-content admin-content">
+            <button class="close-modal" onclick="closeAdminModal()"><i data-lucide="x"></i></button>
+            <div class="modal-header">
+                <h3>Adicionar Nova Dica</h3>
+            </div>
+            <div class="modal-body form-body">
+                <form id="addTipForm">
+                    <div class="form-group">
+                        <label for="tipTitle">Título da Dica</label>
+                        <input type="text" id="tipTitle" required placeholder="Ex: Como usar PROCV">
+                    </div>
+                    <div class="form-group">
+                        <label for="tipCategory">Categoria</label>
+                        <select id="tipCategory" required>
+                            <option value="Novidades">Novidades</option>
+                            <option value="Google Planilhas">Google Planilhas</option>
+                            <option value="Google Docs & Drive">Google Docs & Drive</option>
+                            <option value="Inteligência Artificial">Inteligência Artificial</option>
+                            <option value="Dicas de Windows">Dicas de Windows</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipDuration">Duração (Ex: 5:00)</label>
+                        <input type="text" id="tipDuration" placeholder="5:00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipImage">URL da Capa (Thumbnail)</label>
+                        <input type="url" id="tipImage" required placeholder="https://exemplo.com/imagem.jpg">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="padding: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeAdminModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveTip()"><i data-lucide="save"></i> Salvar
+                    Dica</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,805 @@
+/* 
+=============================================
+Carbonell Tech Tips Design System
+=============================================
+*/
+
+:root {
+    /* Identidade Visual do Colégio Carbonell */
+    --primary-navy: #0F172A;
+    /* Azul Marinho Escuro */
+    --primary-navy-light: #1E293B;
+    /* Azul Marinho (variável) */
+
+    --secondary-blue: #0284C7;
+    /* Azul Claro/Vivo */
+    --secondary-blue-hover: #0369A1;
+
+    --accent-orange: #F97316;
+    /* Laranja (Alertas, Botões) */
+    --accent-orange-hover: #EA580C;
+
+    --bg-light: #F8FAFC;
+    /* Branco/Cinza muito claro corporativo */
+    --bg-white: #FFFFFF;
+
+    --text-main: #334155;
+    --text-dark: #0F172A;
+    --text-light: #F8FAFC;
+    --text-muted: #64748B;
+
+    --transition-speed: 0.3s;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+}
+
+/* =============================================
+Reset & Base
+============================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+    transition: all var(--transition-speed) ease;
+}
+
+/* =============================================
+Navbar (Header)
+============================================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: var(--primary-navy);
+    color: var(--text-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4%;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.5px;
+}
+
+.logo-icon {
+    color: var(--secondary-blue);
+    display: flex;
+    align-items: center;
+}
+
+.logo-text .highlight {
+    color: var(--secondary-blue);
+    font-weight: 400;
+}
+
+/* Search Bar */
+.navbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 500px;
+    margin: 0 20px;
+}
+
+.search-bar {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar .search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    width: 18px;
+    height: 18px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all var(--transition-speed) ease;
+}
+
+.search-bar input:focus {
+    background-color: var(--bg-white);
+    color: var(--text-dark);
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+}
+
+.search-bar input:focus+.search-icon {
+    color: var(--secondary-blue);
+}
+
+/* Navbar Right */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-btn {
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.icon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--accent-orange);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.avatar img {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 2px solid var(--secondary-blue);
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: none;
+    /* Hidden on mobile */
+}
+
+@media (min-width: 768px) {
+    .user-name {
+        display: block;
+    }
+}
+
+/* =============================================
+Buttons
+============================================= */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--accent-orange);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-orange-hover);
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    backdrop-filter: blur(5px);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* =============================================
+Hero Section
+============================================= */
+.hero {
+    position: relative;
+    height: 75vh;
+    min-height: 500px;
+    margin-top: 70px;
+    background-image: url('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=2000');
+    /* Placeholder corporate/school IT image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    padding: 0 4%;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-navy) 0%, rgba(15, 23, 42, 0.8) 40%, rgba(15, 23, 42, 0.1) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    color: var(--text-light);
+    animation: fadeIn 1s ease-out;
+}
+
+.hero-content .badge {
+    display: inline-block;
+    background-color: var(--secondary-blue);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: #cbd5e1;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* =============================================
+Swimlanes (Netflix Style Carousels)
+============================================= */
+.content-container {
+    padding: 40px 0;
+    background: linear-gradient(to bottom, transparent, var(--bg-light) 10%);
+    margin-top: -80px;
+    /* Pulls content up over the hero section slightly */
+    position: relative;
+    z-index: 3;
+}
+
+.swimlane {
+    margin-bottom: 40px;
+    padding: 0 4%;
+}
+
+.swimlane-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-navy);
+    margin-bottom: 15px;
+    display: inline-block;
+    transition: color calc(var(--transition-speed)/2) ease;
+}
+
+.swimlane-title:hover {
+    color: var(--secondary-blue);
+}
+
+.carousel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    /* padding for hover scale */
+    margin: -20px 0;
+    /* negate padding visually */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 100%;
+    max-height: calc(100% - 40px);
+    background: rgba(15, 23, 42, 0.4);
+    color: white;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease, background 0.3s ease;
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.carousel-container:hover .carousel-btn {
+    opacity: 1;
+}
+
+.carousel-btn:hover {
+    background: rgba(15, 23, 42, 0.8);
+}
+
+.prev-btn {
+    left: -15px;
+}
+
+.next-btn {
+    right: -15px;
+}
+
+/* =============================================
+Cards (Thumbnails)
+============================================= */
+.card {
+    flex: 0 0 auto;
+    width: 280px;
+    aspect-ratio: 16/9;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow var(--transition-speed) ease;
+    background-color: var(--primary-navy-light);
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    transition: opacity var(--transition-speed) ease;
+    color: white;
+}
+
+.card:hover {
+    transform: scale(1.08);
+    /* slight expansion */
+    z-index: 5;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover .card-overlay {
+    opacity: 1;
+}
+
+.play-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background-color: var(--accent-orange);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all var(--transition-speed) ease;
+}
+
+.play-circle i {
+    width: 24px;
+    height: 24px;
+    margin-left: 3px;
+    /* visual center for play icon */
+}
+
+.card:hover .play-circle {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-duration {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #cbd5e1;
+}
+
+@media (max-width: 768px) {
+    .card {
+        width: 240px;
+    }
+
+    .carousel-btn {
+        display: none;
+        /* Hide arrows on mobile, allow native swipe */
+    }
+
+    .carousel-track {
+        padding-left: 4%;
+        padding-right: 4%;
+        margin-left: -4%;
+        margin-right: -4%;
+    }
+
+    .swimlane {
+        padding: 0;
+    }
+
+    .swimlane-title {
+        padding-left: 4%;
+    }
+}
+
+/* =============================================
+Modal / Lightbox
+============================================= */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-speed) ease;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    background-color: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    z-index: 2001;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform var(--transition-speed) ease;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.close-modal:hover {
+    background-color: var(--accent-orange);
+    transform: rotate(90deg);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    background-color: var(--primary-navy);
+    color: white;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-body {
+    position: relative;
+    background: #000;
+    aspect-ratio: 16/9;
+}
+
+/* Video Placeholder Style inside Modal */
+.video-placeholder {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+}
+
+.fake-play-btn {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background-color: var(--accent-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+    transition: transform 0.2s;
+}
+
+.fake-play-btn i {
+    width: 36px;
+    height: 36px;
+    margin-left: 5px;
+}
+
+.fake-play-btn:hover {
+    transform: scale(1.1);
+}
+
+
+.modal-footer {
+    padding: 24px;
+    background-color: var(--bg-white);
+    color: var(--text-main);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* =============================================
+Filters
+============================================= */
+.filters-container {
+    padding: 0 4%;
+    margin-bottom: 30px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.filters-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.filter-pill {
+    padding: 8px 16px;
+    background-color: var(--primary-navy-light);
+    color: var(--text-light);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-pill:hover {
+    background-color: var(--secondary-blue);
+}
+
+.filter-pill.active {
+    background-color: var(--secondary-blue);
+    /* Mudado de laranja para azul para combinar mais como filtro */
+    color: white;
+}
+
+/* =============================================
+Admin Form & Deleting
+============================================= */
+.admin-content {
+    max-width: 600px;
+}
+
+.form-body {
+    background-color: var(--bg-white);
+    padding: 24px;
+    color: var(--text-main);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--primary-navy);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--secondary-blue);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(220, 38, 38, 0.9);
+    /* Red */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+.card:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    background-color: rgb(185, 28, 28);
+    transform: scale(1.1);
+}
+
+.delete-btn i {
+    width: 16px;
+    height: 16px;
+}
+
+/* =============================================
+Footer
+============================================= */
+footer {
+    background-color: var(--primary-navy);
+    color: var(--text-muted);
+    text-align: center;
+    padding: 30px 4%;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
