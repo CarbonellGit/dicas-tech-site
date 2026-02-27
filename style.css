@@ -730,12 +730,24 @@ Admin Form & Deleting
     text-align: left;
 }
 
-.form-group label {
+.form-group>label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
     font-size: 0.95rem;
     color: var(--primary-navy);
+}
+
+.required-star {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.field-hint {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    margin-top: -4px;
 }
 
 .form-group input,
@@ -758,12 +770,76 @@ Admin Form & Deleting
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
 }
 
+/* Textarea para descrição */
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-md);
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.2s;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+.form-group textarea:focus {
+    border-color: var(--secondary-blue);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* Checkboxes de categoria */
+.category-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.checkbox-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 20px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-main);
+    background: var(--bg-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.checkbox-pill input[type=checkbox] {
+    width: auto;
+    padding: 0;
+    margin: 0;
+    accent-color: var(--secondary-blue);
+    cursor: pointer;
+}
+
+.checkbox-pill:has(input:checked) {
+    border-color: var(--secondary-blue);
+    background: rgba(2, 132, 199, 0.08);
+    color: var(--secondary-blue);
+}
+
+.checkbox-pill:hover {
+    border-color: var(--secondary-blue);
+}
+
+/* Botão deletar nos cards */
 .delete-btn {
     position: absolute;
     top: 10px;
     right: 10px;
     background-color: rgba(220, 38, 38, 0.9);
-    /* Red */
     color: white;
     border: none;
     border-radius: 50%;
@@ -802,4 +878,118 @@ footer {
     padding: 30px 4%;
     margin-top: 40px;
     font-size: 0.9rem;
+}
+
+/* =============================================
+Thumbnail Upload & Tab Styles
+============================================= */
+.thumbnail-options {
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.thumb-tab-btns {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.thumb-tab {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--bg-light);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.thumb-tab:first-child {
+    border-right: 1px solid #e2e8f0;
+}
+
+.thumb-tab.active {
+    color: var(--secondary-blue);
+    background: var(--bg-white);
+    border-bottom-color: var(--secondary-blue);
+}
+
+.thumb-tab:hover:not(.active) {
+    background: #f1f5f9;
+}
+
+.thumb-panel {
+    padding: 16px;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 16px;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--border-radius-md);
+    background: var(--bg-light);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.file-upload-label:hover {
+    border-color: var(--secondary-blue);
+    color: var(--secondary-blue);
+    background: rgba(2, 132, 199, 0.04);
+}
+
+#tipImageUrl,
+#tipVideoUrl {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-md);
+    font-size: 0.95rem;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    outline: none;
+    transition: all 0.2s;
+}
+
+#tipImageUrl:focus,
+#tipVideoUrl:focus {
+    border-color: var(--secondary-blue);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* =============================================
+Toast de Notificação
+============================================= */
+#appToast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #0F172A;
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+#appToast.toast-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
