@@ -57,7 +57,7 @@
                 Explore nossas dicas e aprenda novas ferramentas para o dia a dia escolar.
             </p>
             <div class="hero-actions">
-                <button class="btn btn-primary" id="heroBtn" style="display:none;" onclick="openHeroTip()">
+                <button class="btn btn-primary" id="heroBtn" style="display:none;">
                     <i data-lucide="play"></i> Assistir Agora
                 </button>
             </div>
@@ -90,9 +90,9 @@
 
     <!-- Video Modal / Lightbox -->
     <div id="videoModal" class="modal">
-        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-backdrop"></div>
         <div class="modal-content">
-            <button class="close-modal" onclick="closeModal()"><i data-lucide="x"></i></button>
+            <button class="close-modal" id="closeVideoModalBtn"><i data-lucide="x"></i></button>
             <div class="modal-header">
                 <h3 id="modalTitle">Título da Dica</h3>
             </div>
@@ -107,25 +107,29 @@
 
     <!-- Modal de Login Admin -->
     <div id="adminLoginModal" class="modal">
-        <div class="modal-backdrop" onclick="closeAdminLoginModal()"></div>
+        <div class="modal-backdrop"></div>
         <div class="modal-content admin-content">
-            <button class="close-modal" onclick="closeAdminLoginModal()"><i data-lucide="x"></i></button>
+            <button class="close-modal" id="closeAdminLoginBtn"><i data-lucide="x"></i></button>
             <div class="modal-header">
                 <h3>Acesso Restrito</h3>
             </div>
             <div class="modal-body form-body" style="aspect-ratio: unset; background: var(--bg-white);">
-                <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.95rem;">Digite a senha de administrador
-                    para continuar.</p>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:0.95rem;">Informe suas credenciais
+                    de administrador para continuar.</p>
+                <div class="form-group">
+                    <label for="adminEmail">E-mail</label>
+                    <input type="email" id="adminEmail" placeholder="admin@exemplo.com" autocomplete="email">
+                </div>
                 <div class="form-group">
                     <label for="adminPassword">Senha</label>
                     <input type="password" id="adminPassword" placeholder="••••••••" autocomplete="current-password">
-                    <p id="adminLoginError" style="color:#dc2626;font-size:0.85rem;margin-top:6px;display:none;">Senha
-                        incorreta. Tente novamente.</p>
+                    <p id="adminLoginError" style="color:#dc2626;font-size:0.85rem;margin-top:6px;display:none;">
+                        E-mail ou senha inválidos. Tente novamente.</p>
                 </div>
             </div>
             <div class="modal-footer" style="padding: 20px;">
-                <button type="button" class="btn btn-secondary" onclick="closeAdminLoginModal()">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="tryAdminLogin()">
+                <button type="button" class="btn btn-secondary" id="cancelAdminLoginBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="adminLoginBtn">
                     <i data-lucide="log-in" style="width:16px;height:16px;"></i> Entrar
                 </button>
             </div>
@@ -134,9 +138,9 @@
 
     <!-- Admin Modal (Adicionar Nova Dica) -->
     <div id="adminModal" class="modal">
-        <div class="modal-backdrop" onclick="closeAdminModal()"></div>
+        <div class="modal-backdrop"></div>
         <div class="modal-content admin-content" style="max-width: 680px;">
-            <button class="close-modal" onclick="closeAdminModal()"><i data-lucide="x"></i></button>
+            <button class="close-modal" id="closeAdminModalBtn"><i data-lucide="x"></i></button>
             <div class="modal-header">
                 <h3>Adicionar Nova Dica</h3>
             </div>
@@ -192,18 +196,16 @@
                                 style="font-weight:400;color:var(--text-muted);">(opcional)</span></label>
                         <div class="thumbnail-options">
                             <div class="thumb-tab-btns">
-                                <button type="button" id="tabThumbUpload" class="thumb-tab active"
-                                    onclick="switchThumbTab('upload')">📁 Upload</button>
-                                <button type="button" id="tabThumbUrl" class="thumb-tab"
-                                    onclick="switchThumbTab('url')">🔗 URL</button>
+                                <button type="button" id="tabThumbUpload" class="thumb-tab active">📁
+                                    Upload</button>
+                                <button type="button" id="tabThumbUrl" class="thumb-tab">🔗 URL</button>
                             </div>
                             <div id="thumbUploadPanel" class="thumb-panel">
                                 <label for="tipImageFile" class="file-upload-label">
                                     <i data-lucide="image" style="width:28px;height:28px;opacity:0.5;"></i>
                                     <span id="fileUploadText">Clique para selecionar uma imagem</span>
                                 </label>
-                                <input type="file" id="tipImageFile" accept="image/*"
-                                    onchange="onThumbFileSelected(event)" style="display:none;">
+                                <input type="file" id="tipImageFile" accept="image/*" style="display:none;">
                             </div>
                             <div id="thumbUrlPanel" class="thumb-panel" style="display:none;">
                                 <input type="url" id="tipImageUrl" placeholder="https://exemplo.com/imagem.jpg">
@@ -211,7 +213,7 @@
                             <div id="thumbPreviewWrap" style="display:none;padding:0 16px 16px;">
                                 <img id="thumbPreviewImg" src="" alt="Preview"
                                     style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">
-                                <button type="button" onclick="clearThumb()"
+                                <button type="button" id="clearThumbBtn"
                                     style="margin-top:6px;font-size:0.8rem;color:#dc2626;background:none;border:none;cursor:pointer;">✕
                                     Remover imagem</button>
                             </div>
@@ -223,10 +225,10 @@
                         <label>Vídeo <span style="font-weight:400;color:var(--text-muted);">(opcional)</span></label>
                         <div class="thumbnail-options">
                             <div class="thumb-tab-btns">
-                                <button type="button" id="tabVideoUpload" class="thumb-tab active"
-                                    onclick="switchVideoTab('upload')">📁 Upload do Computador</button>
-                                <button type="button" id="tabVideoUrl" class="thumb-tab"
-                                    onclick="switchVideoTab('url')">🔗 URL / YouTube</button>
+                                <button type="button" id="tabVideoUpload" class="thumb-tab active">📁 Upload do
+                                    Computador</button>
+                                <button type="button" id="tabVideoUrl" class="thumb-tab">🔗 URL /
+                                    YouTube</button>
                             </div>
                             <div id="videoUploadPanel" class="thumb-panel">
                                 <label for="tipVideoFile" class="file-upload-label" id="videoUploadLabel">
@@ -234,7 +236,7 @@
                                     <span id="videoUploadText">Clique para selecionar um vídeo (MP4, WebM)</span>
                                 </label>
                                 <input type="file" id="tipVideoFile" accept="video/mp4,video/webm,video/ogg"
-                                    onchange="onVideoFileSelected(event)" style="display:none;">
+                                    style="display:none;">
                             </div>
                             <div id="videoUrlPanel" class="thumb-panel" style="display:none;">
                                 <input type="url" id="tipVideoUrl"
@@ -245,7 +247,7 @@
                             <div id="videoPreviewWrap" style="display:none;padding:0 16px 16px;">
                                 <video id="videoPreviewEl" controls
                                     style="width:100%;border-radius:8px;max-height:160px;"></video>
-                                <button type="button" onclick="clearVideo()"
+                                <button type="button" id="clearVideoBtn"
                                     style="margin-top:6px;font-size:0.8rem;color:#dc2626;background:none;border:none;cursor:pointer;">✕
                                     Remover vídeo</button>
                             </div>
@@ -255,14 +257,15 @@
                 </form>
             </div>
             <div class="modal-footer" style="padding: 20px;">
-                <button type="button" class="btn btn-secondary" onclick="closeAdminModal()">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="saveTip()"><i data-lucide="save"></i> Salvar
+                <button type="button" class="btn btn-secondary" id="cancelAdminModalBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveTipBtn"><i data-lucide="save"></i> Salvar
                     Dica</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Entry point: ES6 Module -->
+    <script type="module" src="./js/main.js"></script>
 </body>
 
 </html>
