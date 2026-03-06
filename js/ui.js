@@ -103,9 +103,6 @@ function updateHero() {
             ? latest.description
             : 'Clique em "Assistir Agora" para ver a dica mais recente.';
     }
-    if (heroSection && latest.imageUrl) {
-        heroSection.style.backgroundImage = `url('${latest.imageUrl}')`;
-    }
     if (heroBtn) {
         heroBtn.style.display = "";
         heroBtn.onclick = () => openModal(tips[0].id);
