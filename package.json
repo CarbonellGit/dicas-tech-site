@@ -21,5 +21,8 @@
   "description": "",
   "dependencies": {
     "firebase": "^12.10.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
   }
 }
