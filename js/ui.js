@@ -6,7 +6,8 @@ import {
     fetchTipsFromFirestore,
     saveTipToFirestore,
     deleteTipFromFirestore,
-    uploadFile
+    uploadFile,
+    hasMoreTipsToLoad
 } from "./database.js";
 
 // =============================================
@@ -168,7 +169,7 @@ export function renderSwimlanes() {
             const thumb = tip.imageUrl || DEFAULT_THUMB;
             return `
         <div class="card" data-tip-id="${escapeHTML(tip.id)}">
-          <img src="${escapeHTML(thumb)}" alt="Thumbnail" class="card-image" onerror="this.src='${DEFAULT_THUMB}'">
+          <img src="${escapeHTML(thumb)}" alt="Thumbnail" class="card-image" loading="lazy" onerror="this.src='${DEFAULT_THUMB}'">
           <div class="card-overlay">
             <div class="play-circle"><i data-lucide="play" fill="currentColor"></i></div>
             <h3 class="card-title">${escapeHTML(tip.title)}</h3>
@@ -687,12 +688,47 @@ export function initEventListeners() {
 // =============================================
 // Carregamento Inicial do Firestore
 // =============================================
-export async function loadTips() {
+export async function loadTips(reset = true) {
     try {
-        tips = await fetchTipsFromFirestore();
+        const newTips = await fetchTipsFromFirestore(reset);
+        if (reset) {
+            tips = newTips;
+        } else {
+            tips = [...tips, ...newTips];
+        }
     } catch (err) {
         console.error("Erro ao buscar dicas do Firestore:", err);
-        tips = [];
+        if (reset) tips = [];
     }
     renderSwimlanes();
+    updateLoadMoreButton();
+}
+
+function updateLoadMoreButton() {
+    let btnContainer = document.getElementById("loadMoreContainer");
+    if (!btnContainer) {
+        btnContainer = document.createElement("div");
+        btnContainer.id = "loadMoreContainer";
+        btnContainer.style.cssText = "text-align: center; padding: 30px; margin-bottom: 20px;";
+
+        const btn = document.createElement("button");
+        btn.id = "btnLoadMore";
+        btn.className = "btn btn-secondary";
+        btn.textContent = "Carregar Mais";
+        btn.style.padding = "10px 24px";
+        btn.style.fontSize = "1rem";
+        btn.onclick = () => loadTips(false);
+
+        btnContainer.appendChild(btn);
+
+        const wrapper = document.getElementById("swimlanes-wrapper");
+        if (wrapper && wrapper.parentNode) {
+            wrapper.parentNode.insertBefore(btnContainer, wrapper.nextSibling);
+        }
+    }
+
+    const btn = document.getElementById("btnLoadMore");
+    if (btn) {
+        btn.style.display = hasMoreTipsToLoad() ? "inline-block" : "none";
+    }
 }
