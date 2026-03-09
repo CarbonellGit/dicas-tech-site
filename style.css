@@ -5,28 +5,26 @@ Carbonell Tech Tips Design System
 */
 
 :root {
-    /* Identidade Visual do Colégio Carbonell */
+    /* Identidade Visual - Premium Dark Mode */
     --primary-navy: #0F172A;
-    /* Azul Marinho Escuro */
     --primary-navy-light: #1E293B;
-    /* Azul Marinho (variável) */
 
-    --secondary-blue: #0284C7;
-    /* Azul Claro/Vivo */
-    --secondary-blue-hover: #0369A1;
+    --secondary-blue: #0ea5e9;
+    --secondary-blue-hover: #38bdf8;
 
     --accent-orange: #F97316;
-    /* Laranja (Alertas, Botões) */
-    --accent-orange-hover: #EA580C;
+    --accent-orange-hover: #fb923c;
 
-    --bg-light: #F8FAFC;
-    /* Branco/Cinza muito claro corporativo */
-    --bg-white: #FFFFFF;
+    --bg-light: #0B1120;
+    --bg-white: #1E293B;
+    --bg-focus: #0F172A;
 
-    --text-main: #334155;
-    --text-dark: #0F172A;
-    --text-light: #F8FAFC;
-    --text-muted: #64748B;
+    --text-main: #e2e8f0;
+    --text-dark: #f8fafc;
+    --text-light: #ffffff;
+    --text-muted: #94a3b8;
+
+    --border-color: rgba(255, 255, 255, 0.1);
 
     --transition-speed: 0.3s;
     --border-radius-md: 8px;
@@ -91,10 +89,10 @@ Navbar (Header)
     letter-spacing: -0.5px;
 }
 
-.logo-icon {
-    color: var(--secondary-blue);
-    display: flex;
-    align-items: center;
+.logo-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logo-text .highlight {
@@ -139,10 +137,10 @@ Navbar (Header)
 }
 
 .search-bar input:focus {
-    background-color: var(--bg-white);
+    background-color: var(--bg-focus);
     color: var(--text-dark);
     border-color: var(--secondary-blue);
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
 }
 
 .search-bar input:focus+.search-icon {
@@ -254,7 +252,9 @@ Hero Section
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-navy) 0%, rgba(15, 23, 42, 0.8) 40%, rgba(15, 23, 42, 0.1) 100%);
+    background:
+        linear-gradient(to top, var(--bg-light) 0%, transparent 25%),
+        linear-gradient(90deg, var(--primary-navy) 0%, rgba(15, 23, 42, 0.8) 40%, rgba(15, 23, 42, 0.1) 100%);
     z-index: 1;
 }
 
@@ -332,7 +332,7 @@ Swimlanes (Netflix Style Carousels)
 ============================================= */
 .content-container {
     padding: 40px 0;
-    background: linear-gradient(to bottom, transparent, var(--bg-light) 10%);
+    background: linear-gradient(to bottom, transparent, var(--bg-light) 120px);
     margin-top: -80px;
     /* Pulls content up over the hero section slightly */
     position: relative;
@@ -345,11 +345,12 @@ Swimlanes (Netflix Style Carousels)
 }
 
 .swimlane-title {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    color: var(--primary-navy);
+    color: var(--text-light);
     margin-bottom: 15px;
     display: inline-block;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     transition: color calc(var(--transition-speed)/2) ease;
 }
 
@@ -571,12 +572,13 @@ Modal / Lightbox
     width: 90%;
     max-width: 900px;
     background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
     z-index: 2001;
     overflow: hidden;
     transform: scale(0.95);
     transition: transform var(--transition-speed) ease;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
 }
 
 .modal.active .modal-content {
@@ -735,11 +737,11 @@ Admin Form & Deleting
     margin-bottom: 8px;
     font-weight: 600;
     font-size: 0.95rem;
-    color: var(--primary-navy);
+    color: var(--text-main);
 }
 
 .required-star {
-    color: #dc2626;
+    color: #ef4444;
     font-weight: 700;
 }
 
@@ -754,7 +756,7 @@ Admin Form & Deleting
 .form-group select {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     font-size: 1rem;
     background-color: var(--bg-light);
@@ -766,15 +768,15 @@ Admin Form & Deleting
 .form-group input:focus,
 .form-group select:focus {
     border-color: var(--secondary-blue);
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    background-color: var(--bg-focus);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
 }
 
 /* Textarea para descrição */
 .form-group textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     font-size: 0.95rem;
     font-family: 'Inter', sans-serif;
@@ -789,8 +791,8 @@ Admin Form & Deleting
 
 .form-group textarea:focus {
     border-color: var(--secondary-blue);
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    background-color: var(--bg-focus);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
 }
 
 /* Checkboxes de categoria */
@@ -805,7 +807,7 @@ Admin Form & Deleting
     align-items: center;
     gap: 6px;
     padding: 7px 14px;
-    border: 1.5px solid #cbd5e1;
+    border: 1.5px solid var(--border-color);
     border-radius: 20px;
     font-size: 0.88rem;
     font-weight: 500;
@@ -918,14 +920,14 @@ footer {
 Thumbnail Upload & Tab Styles
 ============================================= */
 .thumbnail-options {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     overflow: hidden;
 }
 
 .thumb-tab-btns {
     display: flex;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .thumb-tab {
@@ -942,7 +944,7 @@ Thumbnail Upload & Tab Styles
 }
 
 .thumb-tab:first-child {
-    border-right: 1px solid #e2e8f0;
+    border-right: 1px solid var(--border-color);
 }
 
 .thumb-tab.active {
@@ -952,7 +954,7 @@ Thumbnail Upload & Tab Styles
 }
 
 .thumb-tab:hover:not(.active) {
-    background: #f1f5f9;
+    background: var(--bg-focus);
 }
 
 .thumb-panel {
@@ -966,7 +968,7 @@ Thumbnail Upload & Tab Styles
     justify-content: center;
     gap: 10px;
     padding: 24px 16px;
-    border: 2px dashed #cbd5e1;
+    border: 2px dashed var(--border-color);
     border-radius: var(--border-radius-md);
     background: var(--bg-light);
     color: var(--text-muted);
@@ -979,14 +981,14 @@ Thumbnail Upload & Tab Styles
 .file-upload-label:hover {
     border-color: var(--secondary-blue);
     color: var(--secondary-blue);
-    background: rgba(2, 132, 199, 0.04);
+    background: rgba(14, 165, 233, 0.1);
 }
 
 #tipImageUrl,
 #tipVideoUrl {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     font-size: 0.95rem;
     background-color: var(--bg-light);
@@ -998,8 +1000,8 @@ Thumbnail Upload & Tab Styles
 #tipImageUrl:focus,
 #tipVideoUrl:focus {
     border-color: var(--secondary-blue);
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+    background-color: var(--bg-focus);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
 }
 
 /* =============================================
@@ -1026,4 +1028,25 @@ Toast de Notificação
 #appToast.toast-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* =============================================
+Custom Scrollbar
+============================================= */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-navy);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
 }
