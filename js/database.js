@@ -9,14 +9,16 @@ import {
     doc,
     query,
     orderBy,
+    limit,
+    startAfter,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+} from "firebase/firestore";
 import {
     ref,
     uploadBytes,
     getDownloadURL,
     deleteObject
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+} from "firebase/storage";
 import { db, storage } from "./firebase-config.js";
 
 const TIPS_COLLECTION = "tips";
@@ -49,15 +51,56 @@ export async function saveTipToFirestore(tipData) {
     return docRef.id;
 }
 
+let lastVisibleTip = null;
+let hasMoreTips = true;
+const TIPS_PER_PAGE = 15;
+
 /**
- * Busca todas as dicas do Firestore, ordenadas por data de criação (mais recentes primeiro).
+ * Busca todas as dicas do Firestore, ordenadas por data de criação (mais recentes primeiro),
+ * com suporte a paginação.
  *
+ * @param {boolean} reset - Se verdadeiro, reseta a paginação e busca as primeiras.
  * @returns {Promise<Array>} Array de objetos de dica com o campo 'id' adicionado.
  */
-export async function fetchTipsFromFirestore() {
-    const q = query(collection(db, TIPS_COLLECTION), orderBy("createdAt", "desc"));
+export async function fetchTipsFromFirestore(reset = false) {
+    if (reset) {
+        lastVisibleTip = null;
+        hasMoreTips = true;
+    }
+
+    if (!hasMoreTips) return [];
+
+    let q = query(
+        collection(db, TIPS_COLLECTION),
+        orderBy("createdAt", "desc"),
+        limit(TIPS_PER_PAGE)
+    );
+
+    if (lastVisibleTip) {
+        q = query(q, startAfter(lastVisibleTip));
+    }
+
     const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        hasMoreTips = false;
+        return [];
+    }
+
+    lastVisibleTip = snapshot.docs[snapshot.docs.length - 1];
+
+    if (snapshot.docs.length < TIPS_PER_PAGE) {
+        hasMoreTips = false;
+    }
+
     return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+/**
+ * Retorna estado indicativo de se há mais dicas para carregar do banco.
+ */
+export function hasMoreTipsToLoad() {
+    return hasMoreTips;
 }
 
 /**

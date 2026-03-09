@@ -2,10 +2,10 @@
 // Inicializa o app do Firebase e exporta as instâncias de serviço.
 // As credenciais são carregadas de firebase-env.js (não versionado).
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { firebaseConfig } from "./firebase-env.js";
 
 const app = initializeApp(firebaseConfig);

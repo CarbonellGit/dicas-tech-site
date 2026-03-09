@@ -1,0 +1,28 @@
+{
+  "name": "dicas-tips",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CarbonellGit/dicas-tips.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CarbonellGit/dicas-tips/issues"
+  },
+  "homepage": "https://github.com/CarbonellGit/dicas-tips#readme",
+  "description": "",
+  "dependencies": {
+    "firebase": "^12.10.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}
