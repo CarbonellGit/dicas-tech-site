@@ -1,19 +1,30 @@
 // js/main.js
 // Controller principal — inicializa o Firebase, listeners e carrega os dados.
 
-import { setupAuth, renderAdminNav, initEventListeners, loadTips } from "./ui.js";
+import { setupAuth, renderAdminNav, initEventListeners, loadTips, renderCategories } from "./ui.js";
+import { fetchCategoriesFromFirestore } from "./database.js";
+import { store } from "./store.js";
 
-// Inicializa o Lucide Icons
-lucide.createIcons();
+async function init() {
+    // Inicializa o Lucide Icons
+    lucide.createIcons();
 
-// Configura o observador de autenticação (Firebase Auth)
-setupAuth();
+    // Configura o observador de autenticação (Firebase Auth)
+    setupAuth();
 
-// Renderiza o botão de admin (inicialmente deslogado)
-renderAdminNav();
+    // Renderiza o botão de admin (inicialmente deslogado)
+    renderAdminNav();
 
-// Vincula todos os event listeners (substitui inline onclick/onchange)
-initEventListeners();
+    // Busca categorias no Firebase e popula a store e a UI
+    const cats = await fetchCategoriesFromFirestore();
+    store.setCategories(cats);
+    renderCategories();
 
-// Carrega dicas do Firestore e renderiza os carrosséis
-loadTips();
+    // Vincula todos os event listeners (substitui inline onclick/onchange)
+    initEventListeners();
+
+    // Carrega dicas do Firestore e renderiza os carrosséis
+    loadTips();
+}
+
+init();
