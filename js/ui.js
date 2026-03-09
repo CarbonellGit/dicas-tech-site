@@ -2,11 +2,13 @@
 // Módulo de Interface — manipulação de DOM, modais, renderização de Swimlanes e eventos.
 
 import { tryAdminLogin, adminLogout, initAuthListener } from "./auth.js";
+import { store } from "./store.js";
 import {
     fetchTipsFromFirestore,
     saveTipToFirestore,
+    updateTipInFirestore,
     deleteTipFromFirestore,
-    uploadFile,
+    uploadFileWithProgress,
     hasMoreTipsToLoad
 } from "./database.js";
 
@@ -23,13 +25,7 @@ function escapeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-// =============================================
-// Estado Global
-// =============================================
-let tips = [];
-let activeCategory = "Todos";
-let searchQuery = "";
-let isAdmin = false;
+
 
 // Estado da mídia selecionada no formulário
 let selectedThumbFile = null;   // File object da thumbnail
@@ -39,13 +35,7 @@ let selectedVideoFile = null;   // File object do vídeo
 let selectedVideoUrl = "";      // URL externa/YouTube do vídeo
 let currentVideoTab = "upload";
 
-// Categorias
-const CATEGORIES = [
-    "Novidades",
-    "Inteligência Artificial",
-    "Ferramentas Google",
-    "Windows"
-];
+
 
 const DEFAULT_THUMB = "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=400";
 
@@ -56,7 +46,7 @@ export function setupAuth() {
     initAuthListener(
         (user) => {
             // Usuário logado
-            isAdmin = true;
+            store.setIsAdmin(true);
             closeAdminLoginModal();
             renderAdminNav();
             renderSwimlanes();
@@ -64,7 +54,7 @@ export function setupAuth() {
         },
         () => {
             // Usuário deslogado
-            isAdmin = false;
+            store.setIsAdmin(false);
             renderAdminNav();
             renderSwimlanes();
         }
@@ -78,7 +68,7 @@ export function renderAdminNav() {
     const container = document.getElementById("adminNavActions");
     if (!container) return;
 
-    if (isAdmin) {
+    if (store.getState().isAdmin) {
         container.innerHTML = `
       <button class="btn btn-secondary" id="navBtnNovaDica" style="padding: 8px 16px; font-size: 0.9rem;">
         <i data-lucide="plus" style="width: 18px; height: 18px;"></i> Nova Dica
@@ -104,8 +94,8 @@ export function renderAdminNav() {
 // Hero Dinâmico (Última dica postada)
 // =============================================
 function updateHero() {
-    if (tips.length === 0) return;
-    const latest = tips[0];
+    if (store.getState().tips.length === 0) return;
+    const latest = store.getState().tips[0];
     const heroSection = document.getElementById("heroSection");
     const heroTitle = document.getElementById("heroTitle");
     const heroDesc = document.getElementById("heroDesc");
@@ -119,7 +109,7 @@ function updateHero() {
     }
     if (heroBtn) {
         heroBtn.style.display = "";
-        heroBtn.onclick = () => openModal(tips[0].id);
+        heroBtn.onclick = () => openModal(store.getState().tips[0].id);
     }
 }
 
@@ -131,8 +121,8 @@ export function renderSwimlanes() {
     if (!wrapper) return;
 
     // Filtra dicas pela query de busca
-    let filteredTips = tips;
-    if (searchQuery.trim() !== "") {
+    let filteredTips = store.getState().tips;
+    if (store.getState().searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
         filteredTips = filteredTips.filter(tip =>
             tip.title.toLowerCase().includes(q) ||
@@ -142,7 +132,7 @@ export function renderSwimlanes() {
 
     // Agrupa por categoria
     const groupedTips = {};
-    CATEGORIES.forEach(cat => (groupedTips[cat] = []));
+    store.getState().categories.forEach(cat => (groupedTips[cat] = []));
     filteredTips.forEach(tip => {
         const cats = Array.isArray(tip.categories)
             ? tip.categories
@@ -153,7 +143,7 @@ export function renderSwimlanes() {
     });
 
     const categoriesToRender =
-        activeCategory === "Todos" ? CATEGORIES : [activeCategory];
+        store.getState().store.getState().activeCategory === "Todos" ? store.getState().categories : [store.getState().activeCategory];
     let hasAnyCards = false;
 
     // Constrói toda a estrutura em memória com DocumentFragment
@@ -175,7 +165,7 @@ export function renderSwimlanes() {
             <h3 class="card-title">${escapeHTML(tip.title)}</h3>
             <p class="card-duration">${escapeHTML(tip.duration)}</p>
           </div>
-          ${isAdmin ? `<button class="delete-btn" data-delete-id="${escapeHTML(tip.id)}" title="Remover"><i data-lucide="trash-2"></i></button>` : ""}
+          ${store.getState().isAdmin ? `<button class="delete-btn" data-delete-id="${escapeHTML(tip.id)}" title="Remover"><i data-lucide="trash-2"></i></button>` : ""}
         </div>`;
         }).join("");
 
@@ -204,7 +194,7 @@ export function renderSwimlanes() {
         emptyDiv.innerHTML = `
       <i data-lucide="film" style="width:64px;height:64px;opacity:0.3;margin-bottom:20px;"></i>
       <h3 style="font-size:1.5rem;margin-bottom:8px;">Nenhuma dica encontrada</h3>
-      <p>Nenhum conteúdo cadastrado${activeCategory !== "Todos" ? ` em "${escapeHTML(activeCategory)}"` : ""}.${isAdmin ? ' Clique em "Nova Dica" para adicionar!' : ""}</p>
+      <p>Nenhum conteúdo cadastrado${store.getState().activeCategory !== "Todos" ? ` em "${escapeHTML(store.getState().activeCategory)}"` : ""}.${store.getState().isAdmin ? ' Clique em "Nova Dica" para adicionar!' : ""}</p>
     `;
         wrapper.appendChild(emptyDiv);
     } else {
@@ -250,15 +240,15 @@ function onSwimlaneClick(e) {
 // Exclusão de Dica
 // =============================================
 async function handleDeleteTip(id) {
-    if (!isAdmin) return;
+    if (!store.getState().isAdmin) return;
     if (!confirm("Tem certeza que deseja remover esta dica?")) return;
 
-    const tip = tips.find(t => t.id === id);
+    const tip = store.getState().tips.find(t => t.id === id);
     if (!tip) return;
 
     try {
         await deleteTipFromFirestore(tip);
-        tips = tips.filter(t => t.id !== id);
+        store.removeTip(id);
         renderSwimlanes();
         showToast("🗑️ Dica removida.");
     } catch (err) {
@@ -294,7 +284,7 @@ function closeAdminLoginModal() {
 // Modal de Adicionar Dica
 // =============================================
 function openAdminModal() {
-    if (!isAdmin) return;
+    if (!store.getState().isAdmin) return;
     resetForm();
     document.getElementById("adminModal")?.classList.add("active");
     document.body.style.overflow = "hidden";
@@ -339,6 +329,10 @@ function resetForm() {
         setValue("tipImageUrl", "");
         setValue("tipVideoUrl", "");
         setDisplay("categoryError", "none");
+
+        setDisplay("uploadProgressContainer", "none");
+        if (document.getElementById("uploadProgressBar")) document.getElementById("uploadProgressBar").style.width = "0%";
+        setText("uploadProgressText", "0%");
 
         document.querySelectorAll(".category-checkboxes input[type=checkbox]").forEach(cb => (cb.checked = false));
     } catch (err) {
@@ -429,7 +423,7 @@ function clearVideo() {
 
 // ---- Salvar Dica ----
 async function saveTip() {
-    if (!isAdmin) return;
+    if (!store.getState().isAdmin) return;
 
     const title = document.getElementById("tipTitle")?.value.trim();
     const duration = document.getElementById("tipDuration")?.value.trim();
@@ -453,25 +447,50 @@ async function saveTip() {
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = "Salvando..."; }
 
     try {
+        // --- PREVENÇÃO DE ARQUIVOS ÓRFÃOS ---
+        // 1. Cria o documento com status "pendente" e sem URLs primeiro
+        const initialData = {
+            title,
+            categories: selectedCats,
+            duration,
+            description,
+            imageUrl: "",
+            videoUrl: "",
+            videoType: "",
+            storageThumbnailPath: "",
+            storageVideoPath: "",
+            status: "pendente"
+        };
+        const newId = await saveTipToFirestore(initialData);
+
         let imageUrl = "";
         let storageThumbnailPath = "";
-
-        // Upload da thumbnail para o Storage ou usar URL externa
-        if (currentThumbTab === "upload" && selectedThumbFile) {
-            storageThumbnailPath = `thumbnails/${Date.now()}_${selectedThumbFile.name}`;
-            imageUrl = await uploadFile(selectedThumbFile, storageThumbnailPath);
-        } else if (currentThumbTab === "url") {
-            imageUrl = document.getElementById("tipImageUrl")?.value.trim() || "";
-        }
-
         let videoUrl = "";
         let storageVideoPath = "";
         let videoType = "";
 
+        const progressContainer = document.getElementById("uploadProgressContainer");
+        const progressText = document.getElementById("uploadProgressText");
+        const progressBar = document.getElementById("uploadProgressBar");
+
+        const updateProgress = (label, p) => {
+            if (progressContainer) progressContainer.style.display = "block";
+            if (progressText) progressText.textContent = `${label}: ${Math.round(p)}%`;
+            if (progressBar) progressBar.style.width = `${p}%`;
+        };
+
+        // Upload da thumbnail para o Storage ou usar URL externa
+        if (currentThumbTab === "upload" && selectedThumbFile) {
+            storageThumbnailPath = `thumbnails/${newId}_${selectedThumbFile.name}`;
+            imageUrl = await uploadFileWithProgress(selectedThumbFile, storageThumbnailPath, (p) => updateProgress("Img", p));
+        } else if (currentThumbTab === "url") {
+            imageUrl = document.getElementById("tipImageUrl")?.value.trim() || "";
+        }
+
         // Upload do vídeo para o Storage ou usar URL/YouTube
         if (currentVideoTab === "upload" && selectedVideoFile) {
-            storageVideoPath = `videos/${Date.now()}_${selectedVideoFile.name}`;
-            videoUrl = await uploadFile(selectedVideoFile, storageVideoPath);
+            storageVideoPath = `videos/${newId}_${selectedVideoFile.name}`;
+            videoUrl = await uploadFileWithProgress(selectedVideoFile, storageVideoPath, (p) => updateProgress("Vídeo", p));
             videoType = "storage";
         } else if (currentVideoTab === "url") {
             const rawUrl = document.getElementById("tipVideoUrl")?.value.trim() || "";
@@ -481,26 +500,24 @@ async function saveTip() {
             }
         }
 
-        const tipData = {
-            title,
-            categories: selectedCats,
-            duration,
-            description,
+        // 3. Atualiza o documento com as URLs finais e muda o status
+        const finalData = {
             imageUrl,
             videoUrl,
             videoType,
             storageThumbnailPath,
-            storageVideoPath
+            storageVideoPath,
+            status: "publicado"
         };
-
-        const newId = await saveTipToFirestore(tipData);
+        await updateTipInFirestore(newId, finalData);
 
         // Adiciona localmente para evitar re-fetch imediato
-        tips.unshift({ id: newId, ...tipData, createdAt: { seconds: Date.now() / 1000 } });
+        const mergedData = { id: newId, ...initialData, ...finalData, createdAt: { seconds: Date.now() / 1000 } };
+        store.prependTip(mergedData);
 
         closeAdminModal();
 
-        activeCategory = "Todos";
+        store.setActiveCategory("Todos");
         document.querySelectorAll(".filter-pill").forEach(p => {
             p.classList.remove("active");
             if (p.getAttribute("data-category") === "Todos") p.classList.add("active");
@@ -524,7 +541,7 @@ async function saveTip() {
 // Modal de Visualização
 // =============================================
 function openModal(tipId) {
-    const tip = tips.find(t => t.id === tipId);
+    const tip = store.getState().tips.find(t => t.id === tipId);
     if (!tip) return;
 
     document.getElementById("modalTitle").textContent = tip.title;
@@ -610,25 +627,15 @@ export function showToast(msg) {
 // Inicialização de Eventos (substitui inline)
 // =============================================
 export function initEventListeners() {
-    // Filtros de categoria
-    document.querySelectorAll(".filter-pill").forEach(pill => {
-        pill.addEventListener("click", e => {
-            document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
-            e.currentTarget.classList.add("active");
-            activeCategory = e.currentTarget.getAttribute("data-category");
-            renderSwimlanes();
-        });
-    });
-
     // Busca
     document.getElementById("searchInput")?.addEventListener("input", e => {
-        searchQuery = e.target.value;
+        store.setSearchQuery(e.target.value);
         renderSwimlanes();
     });
 
     // Hero button
     document.getElementById("heroBtn")?.addEventListener("click", () => {
-        if (tips.length > 0) openModal(tips[0].id);
+        if (store.getState().tips.length > 0) openModal(store.getState().tips[0].id);
     });
 
     // Modal de login
@@ -692,13 +699,13 @@ export async function loadTips(reset = true) {
     try {
         const newTips = await fetchTipsFromFirestore(reset);
         if (reset) {
-            tips = newTips;
+            store.setTips(newTips);
         } else {
-            tips = [...tips, ...newTips];
+            store.appendTips(newTips);
         }
     } catch (err) {
         console.error("Erro ao buscar dicas do Firestore:", err);
-        if (reset) tips = [];
+        if (reset) store.setTips([]);
     }
     renderSwimlanes();
     updateLoadMoreButton();
@@ -730,5 +737,35 @@ function updateLoadMoreButton() {
     const btn = document.getElementById("btnLoadMore");
     if (btn) {
         btn.style.display = hasMoreTipsToLoad() ? "inline-block" : "none";
+    }
+}
+
+export function renderCategories() {
+    const cats = store.getState().categories;
+    const filtersContainer = document.querySelector(".filters-container");
+    if (filtersContainer) {
+        filtersContainer.innerHTML = `<button class="filter-pill active" data-category="Todos">Todos</button>`;
+        cats.forEach(cat => {
+            filtersContainer.innerHTML += `<button class="filter-pill" data-category="${escapeHTML(cat)}">${escapeHTML(cat)}</button>`;
+        });
+        document.querySelectorAll(".filter-pill").forEach(pill => {
+            pill.addEventListener("click", e => {
+                document.querySelectorAll(".filter-pill").forEach(p => p.classList.remove("active"));
+                e.currentTarget.classList.add("active");
+                store.setActiveCategory(e.currentTarget.getAttribute("data-category"));
+                renderSwimlanes();
+            });
+        });
+    }
+
+    const checkboxesContainer = document.querySelector(".category-checkboxes");
+    if (checkboxesContainer) {
+        checkboxesContainer.innerHTML = "";
+        cats.forEach(cat => {
+            checkboxesContainer.innerHTML += `
+            <label class="checkbox-pill">
+                <input type="checkbox" value="${escapeHTML(cat)}"> ${escapeHTML(cat)}
+            </label>`;
+        });
     }
 }
