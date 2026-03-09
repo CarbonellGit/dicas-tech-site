@@ -3,3 +3,8 @@ node_modules/
 
 # Credenciais Firebase (NÃO versionar)
 js/firebase-env.js
+
+
+dist/
+.firebase/
+.firebase-hosting-cache
