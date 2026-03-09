@@ -165,7 +165,10 @@ export function renderSwimlanes() {
             <h3 class="card-title">${escapeHTML(tip.title)}</h3>
             <p class="card-duration">${escapeHTML(tip.duration)}</p>
           </div>
-          ${store.getState().isAdmin ? `<button class="delete-btn" data-delete-id="${escapeHTML(tip.id)}" title="Remover"><i data-lucide="trash-2"></i></button>` : ""}
+          ${store.getState().isAdmin ? `
+            <button class="edit-btn" data-edit-id="${escapeHTML(tip.id)}" title="Editar"><i data-lucide="pencil"></i></button>
+            <button class="delete-btn" data-delete-id="${escapeHTML(tip.id)}" title="Remover"><i data-lucide="trash-2"></i></button>
+          ` : ""}
         </div>`;
         }).join("");
 
@@ -210,6 +213,15 @@ export function renderSwimlanes() {
  * Gerencia cliques em cards (abrir modal), botões de deletar e botões de scroll.
  */
 function onSwimlaneClick(e) {
+    // Botão de editar
+    const editBtn = e.target.closest("[data-edit-id]");
+    if (editBtn) {
+        e.stopPropagation();
+        const id = editBtn.getAttribute("data-edit-id");
+        handleEditTip(id);
+        return;
+    }
+
     // Botão de deletar
     const deleteBtn = e.target.closest("[data-delete-id]");
     if (deleteBtn) {
@@ -258,6 +270,68 @@ async function handleDeleteTip(id) {
 }
 
 // =============================================
+// Edição de Dica
+// =============================================
+async function handleEditTip(id) {
+    if (!store.getState().isAdmin) return;
+    
+    const tip = store.getState().tips.find(t => t.id === id);
+    if (!tip) return;
+
+    resetForm();
+
+    // Fill form
+    const editingInput = document.getElementById("editingTipId");
+    if (editingInput) editingInput.value = tip.id;
+    
+    const modalTitle = document.querySelector("#adminModal .modal-header h3");
+    if (modalTitle) modalTitle.textContent = "Editar Dica";
+    
+    const saveBtn = document.getElementById("saveTipBtn");
+    if (saveBtn) saveBtn.innerHTML = '<i data-lucide="save"></i> Salvar Alterações';
+
+    if (document.getElementById("tipTitle")) document.getElementById("tipTitle").value = tip.title || "";
+    if (document.getElementById("tipDuration")) document.getElementById("tipDuration").value = tip.duration || "";
+    if (document.getElementById("tipDesc")) document.getElementById("tipDesc").value = tip.description || "";
+
+    const cats = Array.isArray(tip.categories) ? tip.categories : (tip.category ? [tip.category] : []);
+    document.querySelectorAll(".category-checkboxes input[type=checkbox]").forEach(cb => {
+        cb.checked = cats.includes(cb.value);
+    });
+
+    // Populate thumb
+    if (tip.imageUrl) {
+        if (tip.storageThumbnailPath) {
+            switchThumbTab("upload");
+            setSrc("thumbPreviewImg", tip.imageUrl);
+            setDisplay("thumbPreviewWrap", "");
+            setText("fileUploadText", "Imagem atual mantida (Selecione nova para trocar)");
+        } else {
+            switchThumbTab("url");
+            if (document.getElementById("tipImageUrl")) document.getElementById("tipImageUrl").value = tip.imageUrl;
+        }
+    }
+
+    // Populate video
+    if (tip.videoUrl) {
+        if (tip.videoType === "url" || tip.videoType === "youtube") {
+            switchVideoTab("url");
+            if (document.getElementById("tipVideoUrl")) document.getElementById("tipVideoUrl").value = tip.videoUrl;
+        } else if (tip.storageVideoPath) {
+            switchVideoTab("upload");
+            const el = document.getElementById("videoPreviewEl");
+            if (el) el.src = tip.videoUrl;
+            setDisplay("videoPreviewWrap", "");
+            setText("videoUploadText", "Vídeo atual mantido (Selecione novo para trocar)");
+        }
+    }
+
+    document.getElementById("adminModal")?.classList.add("active");
+    document.body.style.overflow = "hidden";
+    lucide.createIcons();
+}
+
+// =============================================
 // Modal de Login
 // =============================================
 function openAdminLoginModal() {
@@ -299,6 +373,15 @@ function closeAdminModal() {
 function resetForm() {
     try {
         document.getElementById("addTipForm")?.reset();
+        
+        const editingInput = document.getElementById("editingTipId");
+        if (editingInput) editingInput.value = "";
+        
+        const modalTitle = document.querySelector("#adminModal .modal-header h3");
+        if (modalTitle) modalTitle.textContent = "Adicionar Nova Dica";
+        
+        const saveBtn = document.getElementById("saveTipBtn");
+        if (saveBtn) saveBtn.innerHTML = '<i data-lucide="save"></i> Salvar Dica';
 
         selectedThumbFile = null;
         selectedThumbUrl = "";
@@ -447,27 +530,38 @@ async function saveTip() {
     if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = "Salvando..."; }
 
     try {
-        // --- PREVENÇÃO DE ARQUIVOS ÓRFÃOS ---
-        // 1. Cria o documento com status "pendente" e sem URLs primeiro
+        const editingTipId = document.getElementById("editingTipId")?.value;
+        const isEdit = !!editingTipId;
+        const tipToEdit = isEdit ? store.getState().tips.find(t => t.id === editingTipId) : null;
+
+        // 1. Prepara dados iniciais
         const initialData = {
             title,
             categories: selectedCats,
             duration,
-            description,
-            imageUrl: "",
-            videoUrl: "",
-            videoType: "",
-            storageThumbnailPath: "",
-            storageVideoPath: "",
-            status: "pendente"
+            description
         };
-        const newId = await saveTipToFirestore(initialData);
 
-        let imageUrl = "";
-        let storageThumbnailPath = "";
-        let videoUrl = "";
-        let storageVideoPath = "";
-        let videoType = "";
+        let currentId = editingTipId;
+
+        if (!isEdit) {
+            initialData.imageUrl = "";
+            initialData.videoUrl = "";
+            initialData.videoType = "";
+            initialData.storageThumbnailPath = "";
+            initialData.storageVideoPath = "";
+            initialData.status = "pendente";
+            currentId = await saveTipToFirestore(initialData);
+        } else {
+            initialData.status = "atualizando";
+            await updateTipInFirestore(currentId, initialData);
+        }
+
+        let imageUrl = isEdit ? tipToEdit.imageUrl : "";
+        let storageThumbnailPath = isEdit ? tipToEdit.storageThumbnailPath : "";
+        let videoUrl = isEdit ? tipToEdit.videoUrl : "";
+        let storageVideoPath = isEdit ? tipToEdit.storageVideoPath : "";
+        let videoType = isEdit ? tipToEdit.videoType : "";
 
         const progressContainer = document.getElementById("uploadProgressContainer");
         const progressText = document.getElementById("uploadProgressText");
@@ -480,23 +574,36 @@ async function saveTip() {
         };
 
         // Upload da thumbnail para o Storage ou usar URL externa
-        if (currentThumbTab === "upload" && selectedThumbFile) {
-            storageThumbnailPath = `thumbnails/${newId}_${selectedThumbFile.name}`;
-            imageUrl = await uploadFileWithProgress(selectedThumbFile, storageThumbnailPath, (p) => updateProgress("Img", p));
+        if (currentThumbTab === "upload") {
+            if (selectedThumbFile) {
+                storageThumbnailPath = `thumbnails/${currentId}_${selectedThumbFile.name}`;
+                imageUrl = await uploadFileWithProgress(selectedThumbFile, storageThumbnailPath, (p) => updateProgress("Img", p));
+            }
         } else if (currentThumbTab === "url") {
-            imageUrl = document.getElementById("tipImageUrl")?.value.trim() || "";
+            const rawImgUrl = document.getElementById("tipImageUrl")?.value.trim() || "";
+            if (rawImgUrl) {
+                if (isEdit && rawImgUrl !== tipToEdit.imageUrl) {
+                    storageThumbnailPath = ""; // replaced with new URL
+                }
+                imageUrl = rawImgUrl;
+            }
         }
 
         // Upload do vídeo para o Storage ou usar URL/YouTube
-        if (currentVideoTab === "upload" && selectedVideoFile) {
-            storageVideoPath = `videos/${newId}_${selectedVideoFile.name}`;
-            videoUrl = await uploadFileWithProgress(selectedVideoFile, storageVideoPath, (p) => updateProgress("Vídeo", p));
-            videoType = "storage";
+        if (currentVideoTab === "upload") {
+            if (selectedVideoFile) {
+                storageVideoPath = `videos/${currentId}_${selectedVideoFile.name}`;
+                videoUrl = await uploadFileWithProgress(selectedVideoFile, storageVideoPath, (p) => updateProgress("Vídeo", p));
+                videoType = "storage";
+            }
         } else if (currentVideoTab === "url") {
             const rawUrl = document.getElementById("tipVideoUrl")?.value.trim() || "";
             if (rawUrl) {
                 videoUrl = convertYouTubeUrl(rawUrl);
                 videoType = videoUrl.includes("youtube.com/embed") ? "youtube" : "url";
+                if (isEdit && videoUrl !== tipToEdit.videoUrl) {
+                    storageVideoPath = ""; // replaced with new URL
+                }
             }
         }
 
@@ -509,11 +616,17 @@ async function saveTip() {
             storageVideoPath,
             status: "publicado"
         };
-        await updateTipInFirestore(newId, finalData);
+        await updateTipInFirestore(currentId, finalData);
 
-        // Adiciona localmente para evitar re-fetch imediato
-        const mergedData = { id: newId, ...initialData, ...finalData, createdAt: { seconds: Date.now() / 1000 } };
-        store.prependTip(mergedData);
+        // Adiciona localmente ou atualiza
+        const actTime = isEdit && tipToEdit && tipToEdit.createdAt ? tipToEdit.createdAt : { seconds: Date.now() / 1000 };
+        const mergedData = { id: currentId, ...initialData, ...finalData, createdAt: actTime };
+        
+        if (isEdit) {
+            store.updateTip(currentId, mergedData);
+        } else {
+            store.prependTip(mergedData);
+        }
 
         closeAdminModal();
 
