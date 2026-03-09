@@ -43,6 +43,10 @@ export const store = {
         state.tips = state.tips.filter(t => t.id !== id);
         notifyListeners();
     },
+    updateTip(id, updatedTip) {
+        state.tips = state.tips.map(t => t.id === id ? { ...t, ...updatedTip } : t);
+        notifyListeners();
+    },
     setActiveCategory(category) {
         state.activeCategory = category;
         notifyListeners();

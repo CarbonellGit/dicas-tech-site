@@ -42,13 +42,7 @@
             <!-- Botão Nova Dica: injetado via JS apenas quando admin autenticado -->
             <div id="adminNavActions"></div>
             <div class="user-profile">
-                <div class="avatar">
-                    <img src="https://ui-avatars.com/api/?name=Thiago+Luiz&background=0284c7&color=fff&size=128"
-                        alt="Thiago Luiz">
-                </div>
-                <span class="user-name">Thiago Luiz</span>
             </div>
-        </div>
     </header>
 
     <!-- Hero Section (Dica da Semana - dinâmico) -->
@@ -151,6 +145,7 @@
             <div class="modal-body form-body"
                 style="aspect-ratio: unset; background: var(--bg-white); max-height: 72vh; overflow-y: auto;">
                 <form id="addTipForm">
+                    <input type="hidden" id="editingTipId" value="">
 
                     <!-- Título -->
                     <div class="form-group">
