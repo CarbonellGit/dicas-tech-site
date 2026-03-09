@@ -123,7 +123,7 @@ export function renderSwimlanes() {
     // Filtra dicas pela query de busca
     let filteredTips = store.getState().tips;
     if (store.getState().searchQuery.trim() !== "") {
-        const q = searchQuery.toLowerCase();
+        const q = store.getState().searchQuery.toLowerCase();
         filteredTips = filteredTips.filter(tip =>
             tip.title.toLowerCase().includes(q) ||
             (tip.description && tip.description.toLowerCase().includes(q))
@@ -143,7 +143,7 @@ export function renderSwimlanes() {
     });
 
     const categoriesToRender =
-        store.getState().store.getState().activeCategory === "Todos" ? store.getState().categories : [store.getState().activeCategory];
+        store.getState().activeCategory === "Todos" ? store.getState().categories : [store.getState().activeCategory];
     let hasAnyCards = false;
 
     // Constrói toda a estrutura em memória com DocumentFragment
@@ -628,10 +628,24 @@ export function showToast(msg) {
 // =============================================
 export function initEventListeners() {
     // Busca
+    const doSearch = () => {
+        const input = document.getElementById("searchInput");
+        if (input) {
+            store.setSearchQuery(input.value);
+            renderSwimlanes();
+        }
+    };
+
     document.getElementById("searchInput")?.addEventListener("input", e => {
         store.setSearchQuery(e.target.value);
         renderSwimlanes();
     });
+
+    document.getElementById("searchInput")?.addEventListener("keydown", e => {
+        if (e.key === "Enter") doSearch();
+    });
+
+    document.getElementById("searchBtn")?.addEventListener("click", doSearch);
 
     // Hero button
     document.getElementById("heroBtn")?.addEventListener("click", () => {
