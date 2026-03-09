@@ -10,6 +10,19 @@ import {
 } from "./database.js";
 
 // =============================================
+// Utilitários de Segurança
+// =============================================
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// =============================================
 // Estado Global
 // =============================================
 let tips = [];
@@ -154,21 +167,21 @@ export function renderSwimlanes() {
         const cardsHTML = catTips.map(tip => {
             const thumb = tip.imageUrl || DEFAULT_THUMB;
             return `
-        <div class="card" data-tip-id="${tip.id}">
-          <img src="${thumb}" alt="Thumbnail" class="card-image" onerror="this.src='${DEFAULT_THUMB}'">
+        <div class="card" data-tip-id="${escapeHTML(tip.id)}">
+          <img src="${escapeHTML(thumb)}" alt="Thumbnail" class="card-image" onerror="this.src='${DEFAULT_THUMB}'">
           <div class="card-overlay">
             <div class="play-circle"><i data-lucide="play" fill="currentColor"></i></div>
-            <h3 class="card-title">${tip.title}</h3>
-            <p class="card-duration">${tip.duration}</p>
+            <h3 class="card-title">${escapeHTML(tip.title)}</h3>
+            <p class="card-duration">${escapeHTML(tip.duration)}</p>
           </div>
-          ${isAdmin ? `<button class="delete-btn" data-delete-id="${tip.id}" title="Remover"><i data-lucide="trash-2"></i></button>` : ""}
+          ${isAdmin ? `<button class="delete-btn" data-delete-id="${escapeHTML(tip.id)}" title="Remover"><i data-lucide="trash-2"></i></button>` : ""}
         </div>`;
         }).join("");
 
         const sectionEl = document.createElement("section");
         sectionEl.className = "swimlane";
         sectionEl.innerHTML = `
-      <h2 class="swimlane-title">${cat}</h2>
+      <h2 class="swimlane-title">${escapeHTML(cat)}</h2>
       <div class="carousel-container">
         <button class="carousel-btn prev-btn" data-scroll="-500"><i data-lucide="chevron-left"></i></button>
         <div class="carousel-track">${cardsHTML}</div>
@@ -190,7 +203,7 @@ export function renderSwimlanes() {
         emptyDiv.innerHTML = `
       <i data-lucide="film" style="width:64px;height:64px;opacity:0.3;margin-bottom:20px;"></i>
       <h3 style="font-size:1.5rem;margin-bottom:8px;">Nenhuma dica encontrada</h3>
-      <p>Nenhum conteúdo cadastrado${activeCategory !== "Todos" ? ` em "${activeCategory}"` : ""}.${isAdmin ? ' Clique em "Nova Dica" para adicionar!' : ""}</p>
+      <p>Nenhum conteúdo cadastrado${activeCategory !== "Todos" ? ` em "${escapeHTML(activeCategory)}"` : ""}.${isAdmin ? ' Clique em "Nova Dica" para adicionar!' : ""}</p>
     `;
         wrapper.appendChild(emptyDiv);
     } else {
@@ -530,7 +543,7 @@ function openModal(tipId) {
     if (tip.videoUrl) {
         if (tip.videoType === "youtube") {
             body.innerHTML = `
-        <iframe src="${tip.videoUrl}?autoplay=1"
+        <iframe src="${escapeHTML(tip.videoUrl)}?autoplay=1"
           style="width:100%;height:100%;border:none;"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen></iframe>`;
@@ -538,8 +551,8 @@ function openModal(tipId) {
             // storage ou url direta
             body.innerHTML = `
         <video controls autoplay style="width:100%;height:100%;background:#000;">
-          <source src="${tip.videoUrl}" type="video/mp4">
-          <source src="${tip.videoUrl}" type="video/webm">
+          <source src="${escapeHTML(tip.videoUrl)}" type="video/mp4">
+          <source src="${escapeHTML(tip.videoUrl)}" type="video/webm">
           Seu navegador não suporta vídeo HTML5.
         </video>`;
         }
@@ -547,7 +560,7 @@ function openModal(tipId) {
         const imgSrc = tip.imageUrl || DEFAULT_THUMB;
         body.innerHTML = `
       <div class="video-placeholder">
-        <img src="${imgSrc}" alt="${tip.title}" onerror="this.src='${DEFAULT_THUMB}'">
+        <img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(tip.title)}" onerror="this.src='${DEFAULT_THUMB}'">
         <div class="fake-play-btn"><i data-lucide="play" fill="currentColor"></i></div>
       </div>`;
         lucide.createIcons();
