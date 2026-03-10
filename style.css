@@ -1050,3 +1050,104 @@ Custom Scrollbar
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.25);
 }
+
+/* =============================================
+Mobile Responsiveness (max-width: 768px)
+============================================= */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 4%;
+        gap: 12px;
+    }
+
+    .navbar-left {
+        order: 1;
+        flex: 1;
+    }
+
+    .navbar-right {
+        order: 2;
+        flex: 1;
+        justify-content: flex-end;
+    }
+
+    .navbar-center {
+        order: 3;
+        flex: 1 1 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .logo-img {
+        height: 32px;
+    }
+
+    .logo-text {
+        font-size: 1.05rem;
+    }
+
+    .user-profile {
+        gap: 8px;
+    }
+
+    /* Hero section */
+    .hero {
+        margin-top: 116px;
+        /* Compensate for taller navbar */
+        min-height: 480px;
+        height: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* Modals */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px auto;
+    }
+
+    .modal-header {
+        padding: 16px;
+    }
+
+    .modal-body.form-body {
+        padding: 16px;
+        max-height: 60vh !important;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .thumb-tab-btns {
+        flex-direction: column;
+    }
+
+    .thumb-tab {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-color);
+        padding: 8px;
+    }
+
+    .thumb-tab:last-child {
+        border-bottom: none;
+    }
+
+    .category-checkboxes {
+        gap: 6px;
+    }
+
+    .checkbox-pill {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .modal-footer {
+        padding: 16px;
+    }
+}
