@@ -1,6 +1,9 @@
-// js/database.js
-// Módulo de Banco de Dados e Storage — CRUD no Firestore e uploads no Firebase Storage.
-
+/**
+ * @module database
+ * @description Módulo responsável pela comunicação com o Firestore e Firebase Storage.
+ * Implementa operações CRUD para as dicas (tips) e categorias, 
+ * além de uploads de arquivos de mídia com controle de progresso.
+ */
 import {
     collection,
     addDoc,

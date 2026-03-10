@@ -1,5 +1,8 @@
-// js/ui.js
-// Módulo de Interface — manipulação de DOM, modais, renderização de Swimlanes e eventos.
+/**
+ * @module ui
+ * @description Módulo de Interface — responsável pela manipulação direta do DOM, 
+ * controle de modais, renderização de Swimlanes (carrosséis) e vinculação de eventos.
+ */
 
 import { tryAdminLogin, adminLogout, initAuthListener } from "./auth.js";
 import { store } from "./store.js";
@@ -274,7 +277,7 @@ async function handleDeleteTip(id) {
 // =============================================
 async function handleEditTip(id) {
     if (!store.getState().isAdmin) return;
-    
+
     const tip = store.getState().tips.find(t => t.id === id);
     if (!tip) return;
 
@@ -283,10 +286,10 @@ async function handleEditTip(id) {
     // Fill form
     const editingInput = document.getElementById("editingTipId");
     if (editingInput) editingInput.value = tip.id;
-    
+
     const modalTitle = document.querySelector("#adminModal .modal-header h3");
     if (modalTitle) modalTitle.textContent = "Editar Dica";
-    
+
     const saveBtn = document.getElementById("saveTipBtn");
     if (saveBtn) saveBtn.innerHTML = '<i data-lucide="save"></i> Salvar Alterações';
 
@@ -373,13 +376,13 @@ function closeAdminModal() {
 function resetForm() {
     try {
         document.getElementById("addTipForm")?.reset();
-        
+
         const editingInput = document.getElementById("editingTipId");
         if (editingInput) editingInput.value = "";
-        
+
         const modalTitle = document.querySelector("#adminModal .modal-header h3");
         if (modalTitle) modalTitle.textContent = "Adicionar Nova Dica";
-        
+
         const saveBtn = document.getElementById("saveTipBtn");
         if (saveBtn) saveBtn.innerHTML = '<i data-lucide="save"></i> Salvar Dica';
 
@@ -621,7 +624,7 @@ async function saveTip() {
         // Adiciona localmente ou atualiza
         const actTime = isEdit && tipToEdit && tipToEdit.createdAt ? tipToEdit.createdAt : { seconds: Date.now() / 1000 };
         const mergedData = { id: currentId, ...initialData, ...finalData, createdAt: actTime };
-        
+
         if (isEdit) {
             store.updateTip(currentId, mergedData);
         } else {
