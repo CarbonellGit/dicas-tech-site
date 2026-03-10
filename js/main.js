@@ -5,6 +5,12 @@ import { setupAuth, renderAdminNav, initEventListeners, loadTips, renderCategori
 import { fetchCategoriesFromFirestore } from "./database.js";
 import { store } from "./store.js";
 
+/**
+ * Inicializa a aplicação configurando ícones, autenticação,
+ * controle de estado, eventos de interface e carregamento inicial de dados.
+ * @async
+ * @function init
+ */
 async function init() {
     // Inicializa o Lucide Icons
     lucide.createIcons();
