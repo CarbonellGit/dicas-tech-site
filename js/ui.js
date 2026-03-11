@@ -164,7 +164,7 @@ export function renderSwimlanes() {
             if(tip.referenceDate) {
                 const parts = tip.referenceDate.split('-');
                 if(parts.length === 3) {
-                   refBadge = `<div class="card-ref-date" style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:4px; z-index:2; backdrop-filter:blur(4px);"><i data-lucide="calendar" style="width:10px;height:10px;display:inline-block;margin-right:4px;vertical-align:middle;"></i><span style="vertical-align:middle;">${parts[2]}/${parts[1]}/${parts[0]}</span></div>`;
+                   refBadge = `<div class="card-ref-date" style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:4px; z-index:2; backdrop-filter:blur(4px);"><i data-lucide="calendar" style="width:10px;height:10px;display:inline-block;margin-right:4px;vertical-align:middle;"></i><span style="vertical-align:middle;">${parts[2]}/${parts[1]}/${parts[0]}</span></div>`;
                 }
             }
 
