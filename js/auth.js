@@ -3,6 +3,7 @@
 
 import {
     signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged
 } from "firebase/auth";
@@ -22,21 +23,36 @@ export async function tryAdminLogin() {
 
     if (!email || !password) {
         if (errorEl) {
-            errorEl.textContent = "Preencha o e-mail e a senha.";
+            errorEl.textContent = "Preencha o usuário e a senha.";
             errorEl.style.display = "block";
         }
         return;
+    }
+
+    let loginEmail = email;
+    if (loginEmail.toLowerCase() === "admin") {
+        loginEmail = "admin@carbonell.com.br";
     }
 
     const loginBtn = document.getElementById("adminLoginBtn");
     if (loginBtn) { loginBtn.disabled = true; loginBtn.textContent = "Entrando..."; }
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, loginEmail, password);
         // O onAuthStateChanged cuida de fechar o modal e atualizar a UI
     } catch (err) {
+        // Se for o login do admin primário que ainda não existe no Firebase, tenta criá-lo
+        if (loginEmail === "admin@carbonell.com.br" && password === "Intelcore@2026") {
+            try {
+                await createUserWithEmailAndPassword(auth, loginEmail, password);
+                return;
+            } catch (createErr) {
+                console.error("Erro ao criar admin auto:", createErr);
+            }
+        }
+
         if (errorEl) {
-            errorEl.textContent = "E-mail ou senha inválidos. Tente novamente.";
+            errorEl.textContent = "Usuário ou senha inválidos. Tente novamente.";
             errorEl.style.display = "block";
         }
         if (passwordEl) passwordEl.value = "";
