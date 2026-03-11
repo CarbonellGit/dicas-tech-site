@@ -160,8 +160,17 @@ export function renderSwimlanes() {
         // Monta o HTML dos cards em uma única string
         const cardsHTML = catTips.map(tip => {
             const thumb = tip.imageUrl || DEFAULT_THUMB;
+            let refBadge = "";
+            if(tip.referenceDate) {
+                const parts = tip.referenceDate.split('-');
+                if(parts.length === 3) {
+                   refBadge = `<div class="card-ref-date" style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; font-size:0.7rem; padding:2px 6px; border-radius:4px; z-index:2; backdrop-filter:blur(4px);"><i data-lucide="calendar" style="width:10px;height:10px;display:inline-block;margin-right:4px;vertical-align:middle;"></i><span style="vertical-align:middle;">${parts[2]}/${parts[1]}/${parts[0]}</span></div>`;
+                }
+            }
+
             return `
         <div class="card" data-tip-id="${escapeHTML(tip.id)}">
+          ${refBadge}
           <img src="${escapeHTML(thumb)}" alt="Thumbnail" class="card-image" loading="lazy" onerror="this.src='${DEFAULT_THUMB}'">
           <div class="card-overlay">
             <div class="play-circle"><i data-lucide="play" fill="currentColor"></i></div>
@@ -296,6 +305,7 @@ async function handleEditTip(id) {
     if (document.getElementById("tipTitle")) document.getElementById("tipTitle").value = tip.title || "";
     if (document.getElementById("tipDuration")) document.getElementById("tipDuration").value = tip.duration || "";
     if (document.getElementById("tipDesc")) document.getElementById("tipDesc").value = tip.description || "";
+    if (document.getElementById("tipReferenceDate")) document.getElementById("tipReferenceDate").value = tip.referenceDate || "";
 
     const cats = Array.isArray(tip.categories) ? tip.categories : (tip.category ? [tip.category] : []);
     document.querySelectorAll(".category-checkboxes input[type=checkbox]").forEach(cb => {
@@ -414,6 +424,7 @@ function resetForm() {
         setValue("tipVideoFile", "");
         setValue("tipImageUrl", "");
         setValue("tipVideoUrl", "");
+        setValue("tipReferenceDate", "");
         setDisplay("categoryError", "none");
 
         setDisplay("uploadProgressContainer", "none");
@@ -514,6 +525,7 @@ async function saveTip() {
     const title = document.getElementById("tipTitle")?.value.trim();
     const duration = document.getElementById("tipDuration")?.value.trim();
     const description = document.getElementById("tipDesc")?.value.trim() || "";
+    const referenceDate = document.getElementById("tipReferenceDate")?.value || "";
 
     if (!title || !duration) {
         alert("Por favor, preencha o título e a duração.");
@@ -542,7 +554,8 @@ async function saveTip() {
             title,
             categories: selectedCats,
             duration,
-            description
+            description,
+            referenceDate
         };
 
         let currentId = editingTipId;
@@ -662,8 +675,25 @@ function openModal(tipId) {
 
     document.getElementById("modalTitle").textContent = tip.title;
     const descEl = document.getElementById("modalDesc");
-    if (tip.description) {
-        descEl.textContent = tip.description;
+    if (tip.description || tip.referenceDate) {
+        descEl.innerHTML = ""; // clear
+        if (tip.referenceDate) {
+            const parts = tip.referenceDate.split('-');
+            if(parts.length === 3) {
+                const refSpan = document.createElement("div");
+                refSpan.style.marginBottom = "10px";
+                refSpan.style.fontSize = "0.85rem";
+                refSpan.style.color = "var(--text-muted)";
+                refSpan.innerHTML = `<i data-lucide="calendar" style="width:14px;height:14px;display:inline-block;margin-right:4px;vertical-align:middle;"></i><strong style="vertical-align:middle;">Data Referência:</strong> <span style="vertical-align:middle;">${parts[2]}/${parts[1]}/${parts[0]}</span>`;
+                descEl.appendChild(refSpan);
+            }
+        }
+        if (tip.description) {
+            const descSpan = document.createElement("div");
+            descSpan.textContent = tip.description;
+            descSpan.style.whiteSpace = "pre-wrap";
+            descEl.appendChild(descSpan);
+        }
         descEl.style.display = "";
     } else {
         descEl.style.display = "none";
@@ -697,8 +727,10 @@ function openModal(tipId) {
         <img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(tip.title)}" onerror="this.src='${DEFAULT_THUMB}'">
         <div class="fake-play-btn"><i data-lucide="play" fill="currentColor"></i></div>
       </div>`;
-        lucide.createIcons();
     }
+    
+    // Atualiza os ícones do Lucide injetados dinamicamente na descrição e placeholder
+    lucide.createIcons();
 }
 
 function closeModal() {
